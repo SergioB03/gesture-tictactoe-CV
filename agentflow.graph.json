@@ -5,7 +5,7 @@
     "goal": "Implement the tic-tac-toe rules engine in tictactoe/game.py so it satisfies docs/game-logic-spec.md and the contract tests.",
     "acceptance_criteria": [
       "tictactoe/game.py exists and exposes Game and InvalidMove as described in docs/game-logic-spec.md.",
-      "python -m pytest passes with every test in tests/test_game_contract.py.",
+      "py -m pytest passes with every test in tests/test_game_contract.py.",
       "tests/test_game_contract.py is unchanged."
     ],
     "constraints": [
@@ -55,7 +55,7 @@
           "goal": "Write tictactoe/game.py to match the spec and pass the contract tests, then publish a short handoff.",
           "acceptance_criteria": [
             "Every rule in docs/game-logic-spec.md is implemented.",
-            "python -m pytest was run and its result is reported in the handoff.",
+            "py -m pytest was run and its result is reported in the handoff.",
             "The handoff artifact lists the files changed, the test result, and any rule that was ambiguous."
           ],
           "constraints": [
@@ -123,11 +123,11 @@
         "intent": {
           "goal": "Run the test suite against the implementation.",
           "acceptance_criteria": [
-            "python -m pytest exits successfully."
+            "py -m pytest exits successfully."
           ],
           "constraints": []
         },
-        "command": "python",
+        "command": "py",
         "args": ["-m", "pytest", "-q"]
       }
     ]
