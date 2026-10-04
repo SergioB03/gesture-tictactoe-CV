@@ -1,0 +1,135 @@
+{
+  "version": "1",
+  "graph_id": "game-rules-engine",
+  "intent": {
+    "goal": "Implement the tic-tac-toe rules engine in tictactoe/game.py so it satisfies docs/game-logic-spec.md and the contract tests.",
+    "acceptance_criteria": [
+      "tictactoe/game.py exists and exposes Game and InvalidMove as described in docs/game-logic-spec.md.",
+      "python -m pytest passes with every test in tests/test_game_contract.py.",
+      "tests/test_game_contract.py is unchanged."
+    ],
+    "constraints": [
+      "Python standard library only. Do not add third-party dependencies.",
+      "Do not edit tests/test_game_contract.py, docs/game-logic-spec.md, or agentflow.graph.json.",
+      "Do not add camera, OpenCV, MediaPipe, or UI code. This task is the rules engine only.",
+      "Only create or change files under tictactoe/ and, for extra tests, new files under tests/."
+    ]
+  },
+  "repos": {
+    "main": {
+      "path": "."
+    }
+  },
+  "defaults": {
+    "launch_profile": "default",
+    "workspace_backend": "worktree"
+  },
+  "profiles": {
+    "default": {
+      "harness": "cursor-cli",
+      "model": "auto",
+      "sandbox": "workspace-write"
+    },
+    "supervisor": {
+      "harness": "cursor-cli",
+      "model": "auto",
+      "sandbox": "read-only"
+    }
+  },
+  "supervision": {
+    "profile": "supervisor",
+    "max_total_interventions": 2
+  },
+  "graph": {
+    "type": "sequence",
+    "id": "root",
+    "steps": [
+      {
+        "type": "agent",
+        "id": "implement_rules",
+        "runtime": {
+          "repo": "main",
+          "profile": "default"
+        },
+        "intent": {
+          "goal": "Write tictactoe/game.py to match the spec and pass the contract tests, then publish a short handoff.",
+          "acceptance_criteria": [
+            "Every rule in docs/game-logic-spec.md is implemented.",
+            "python -m pytest was run and its result is reported in the handoff.",
+            "The handoff artifact lists the files changed, the test result, and any rule that was ambiguous."
+          ],
+          "constraints": [
+            "Do not finish without writing the handoff artifact.",
+            "Keep the code readable for a student: type hints, short methods, a docstring on the class."
+          ]
+        },
+        "support": {
+          "context": [
+            {
+              "kind": "workspace_file",
+              "name": "spec",
+              "path": "docs/game-logic-spec.md",
+              "what": "The public API and rules for the game engine.",
+              "why": "It is the source of truth for what to build."
+            },
+            {
+              "kind": "workspace_file",
+              "name": "contract_tests",
+              "path": "tests/test_game_contract.py",
+              "what": "The pytest contract tests that define done.",
+              "why": "The implementation must pass these without changing them."
+            },
+            {
+              "kind": "workspace_file",
+              "name": "readme",
+              "path": "README.md",
+              "what": "Project overview and layout.",
+              "why": "It shows how the rules engine fits into the larger webcam game."
+            }
+          ]
+        },
+        "artifacts": {
+          "handoff": {
+            "from": "output_dir",
+            "path": "handoff.md",
+            "description": "Files changed, test result, and open questions from the implementation node."
+          }
+        }
+      },
+      {
+        "type": "check",
+        "id": "contract_tests_unchanged",
+        "check_kind": "deterministic",
+        "runtime": {
+          "repo": "main"
+        },
+        "intent": {
+          "goal": "Confirm the contract test file was not modified.",
+          "acceptance_criteria": [
+            "git diff reports no change to tests/test_game_contract.py."
+          ],
+          "constraints": []
+        },
+        "command": "git",
+        "args": ["diff", "--exit-code", "HEAD", "--", "tests/test_game_contract.py"]
+      },
+      {
+        "type": "check",
+        "id": "pytest",
+        "check_kind": "deterministic",
+        "runtime": {
+          "repo": "main"
+        },
+        "intent": {
+          "goal": "Run the test suite against the implementation.",
+          "acceptance_criteria": [
+            "python -m pytest exits successfully."
+          ],
+          "constraints": []
+        },
+        "command": "python",
+        "args": ["-m", "pytest", "-q"]
+      }
+    ]
+  }
+}

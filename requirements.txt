@@ -1,0 +1,3 @@
+# Runtime dependencies for the webcam game (added when the vision layer is built).
+# opencv-python
+# mediapipe
